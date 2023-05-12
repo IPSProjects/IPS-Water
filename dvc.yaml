@@ -1,12 +1,4 @@
 plots:
-- nodes/ASEMD/metrics_dict.csv: {}
-- nodes/MLModel/training.csv:
-    template: dvc_plots/templates/y_log.json
-    x: epoch
-    y:
-    - loss
-    - rmse_e_per_atom
-    - rmse_f
 - nodes/ASEMD_1/metrics_dict.csv: {}
 stages:
   ASEGeoOpt:
@@ -45,10 +37,9 @@ stages:
     - nodes/ASEGeoOpt/model_outs
     - nodes/ASEGeoOpt/optim.traj
     - nodes/ASEMD_1_thermostat/hash
+    - nodes/MLModel/gap.input
     - nodes/MLModel/model
-    - nodes/MLModel/test-data.extxyz
-    - nodes/MLModel/train-data.extxyz
-    - nodes/MLModel/training.csv
+    - nodes/MLModel/train_atoms.extxyz
     metrics:
     - nodes/ASEMD_1/steps_before_stopping.json:
         cache: false
@@ -120,37 +111,15 @@ stages:
     - nodes/ConfigurationSelection_1/selected_configurations.json
     params:
     - ConfigurationSelection_1
-  ConfigurationSelection_2:
-    cmd: zntrack run ipsuite.configuration_selection.random.RandomSelection --name
-      ConfigurationSelection_2
-    deps:
-    - nodes/ASEMD/metrics_dict.csv
-    - nodes/ASEMD/model
-    - nodes/ASEMD/steps_before_stopping.json
-    - nodes/ASEMD/trajectory.h5
-    - nodes/ASEMD/velocity_cache.json
-    - nodes/ConfigurationSelection/_hash.json
-    - nodes/ConfigurationSelection/selected_configurations.json
-    - nodes/ConfigurationSelection_1/_hash.json
-    - nodes/ConfigurationSelection_1/selected_configurations.json
-    outs:
-    - nodes/ConfigurationSelection_2/_hash.json
-    - nodes/ConfigurationSelection_2/selected_configurations.json
-    params:
-    - ConfigurationSelection_2
   MLModel:
-    cmd: zntrack run ipsuite.models.mace_model.MACE --name MLModel
+    cmd: zntrack run ipsuite.models.gap.GAP --name MLModel
     deps:
-    - mace.yaml
     - nodes/ConfigurationSelection_1/_hash.json
     - nodes/ConfigurationSelection_1/selected_configurations.json
-    - nodes/ConfigurationSelection_2/_hash.json
-    - nodes/ConfigurationSelection_2/selected_configurations.json
     outs:
+    - nodes/MLModel/gap.input
     - nodes/MLModel/model
-    - nodes/MLModel/test-data.extxyz
-    - nodes/MLModel/train-data.extxyz
-    - nodes/MLModel/training.csv
+    - nodes/MLModel/train_atoms.extxyz
     params:
     - MLModel
   Packmol:
@@ -168,10 +137,9 @@ stages:
     deps:
     - nodes/ConfigurationSelection/_hash.json
     - nodes/ConfigurationSelection/selected_configurations.json
+    - nodes/MLModel/gap.input
     - nodes/MLModel/model
-    - nodes/MLModel/test-data.extxyz
-    - nodes/MLModel/train-data.extxyz
-    - nodes/MLModel/training.csv
+    - nodes/MLModel/train_atoms.extxyz
     outs:
     - nodes/Prediction/atoms.h5
   PredictionMetrics:
