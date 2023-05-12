@@ -1,0 +1,200 @@
+plots:
+- nodes/ASEMD/metrics_dict.csv: {}
+- nodes/MLModel/training.csv:
+    template: dvc_plots/templates/y_log.json
+    x: epoch
+    y:
+    - loss
+    - rmse_e_per_atom
+    - rmse_f
+- nodes/ASEMD_1/metrics_dict.csv: {}
+stages:
+  ASEGeoOpt:
+    cmd: zntrack run ipsuite.calculators.ase_geoopt.ASEGeoOpt --name ASEGeoOpt
+    deps:
+    - nodes/CP2KSinglePoint/atoms.h5
+    - nodes/CP2KSinglePoint/cp2k
+    - nodes/Packmol/atoms.h5
+    - nodes/Packmol/packmol
+    outs:
+    - nodes/ASEGeoOpt/model_outs
+    - nodes/ASEGeoOpt/optim.traj
+    params:
+    - ASEGeoOpt
+  ASEMD:
+    cmd: zntrack run ipsuite.calculators.ase_md.ASEMD --name ASEMD
+    deps:
+    - nodes/ASEGeoOpt/model_outs
+    - nodes/ASEGeoOpt/optim.traj
+    - nodes/ASEMD_thermostat/hash
+    - nodes/CP2KSinglePoint/atoms.h5
+    - nodes/CP2KSinglePoint/cp2k
+    metrics:
+    - nodes/ASEMD/steps_before_stopping.json:
+        cache: false
+    outs:
+    - nodes/ASEMD/metrics_dict.csv
+    - nodes/ASEMD/model
+    - nodes/ASEMD/trajectory.h5
+    - nodes/ASEMD/velocity_cache.json
+    params:
+    - ASEMD
+  ASEMD_1:
+    cmd: zntrack run ipsuite.calculators.ase_md.ASEMD --name ASEMD_1
+    deps:
+    - nodes/ASEGeoOpt/model_outs
+    - nodes/ASEGeoOpt/optim.traj
+    - nodes/ASEMD_1_thermostat/hash
+    - nodes/MLModel/model
+    - nodes/MLModel/test-data.extxyz
+    - nodes/MLModel/train-data.extxyz
+    - nodes/MLModel/training.csv
+    metrics:
+    - nodes/ASEMD_1/steps_before_stopping.json:
+        cache: false
+    outs:
+    - nodes/ASEMD_1/metrics_dict.csv
+    - nodes/ASEMD_1/model
+    - nodes/ASEMD_1/trajectory.h5
+    - nodes/ASEMD_1/velocity_cache.json
+    params:
+    - ASEMD_1
+  ASEMD_1_thermostat:
+    cmd: zntrack run ipsuite.calculators.ase_md.LangevinThermostat --name ASEMD_1_thermostat
+      --hash-only
+    outs:
+    - nodes/ASEMD_1_thermostat/hash
+    params:
+    - ASEMD_1_thermostat
+    - zntrack.json:
+      - ASEMD_1.thermostat
+  ASEMD_thermostat:
+    cmd: zntrack run ipsuite.calculators.ase_md.LangevinThermostat --name ASEMD_thermostat
+      --hash-only
+    outs:
+    - nodes/ASEMD_thermostat/hash
+    params:
+    - ASEMD_thermostat
+    - zntrack.json:
+      - ASEMD.thermostat
+  CP2KSinglePoint:
+    cmd: zntrack run ipsuite.calculators.cp2k.CP2KSinglePoint --name CP2KSinglePoint
+    deps:
+    - GTH_BASIS_SETS
+    - GTH_POTENTIALS
+    - dftd3.dat
+    - nodes/Packmol/atoms.h5
+    - nodes/Packmol/packmol
+    outs:
+    - nodes/CP2KSinglePoint/atoms.h5
+    - nodes/CP2KSinglePoint/cp2k
+    params:
+    - cp2k.yaml:
+  ConfigurationSelection:
+    cmd: zntrack run ipsuite.configuration_selection.random.RandomSelection --name
+      ConfigurationSelection
+    deps:
+    - nodes/ASEMD/metrics_dict.csv
+    - nodes/ASEMD/model
+    - nodes/ASEMD/steps_before_stopping.json
+    - nodes/ASEMD/trajectory.h5
+    - nodes/ASEMD/velocity_cache.json
+    outs:
+    - nodes/ConfigurationSelection/_hash.json
+    - nodes/ConfigurationSelection/selected_configurations.json
+    params:
+    - ConfigurationSelection
+  ConfigurationSelection_1:
+    cmd: zntrack run ipsuite.configuration_selection.random.RandomSelection --name
+      ConfigurationSelection_1
+    deps:
+    - nodes/ASEMD/metrics_dict.csv
+    - nodes/ASEMD/model
+    - nodes/ASEMD/steps_before_stopping.json
+    - nodes/ASEMD/trajectory.h5
+    - nodes/ASEMD/velocity_cache.json
+    - nodes/ConfigurationSelection/_hash.json
+    - nodes/ConfigurationSelection/selected_configurations.json
+    outs:
+    - nodes/ConfigurationSelection_1/_hash.json
+    - nodes/ConfigurationSelection_1/selected_configurations.json
+    params:
+    - ConfigurationSelection_1
+  ConfigurationSelection_2:
+    cmd: zntrack run ipsuite.configuration_selection.random.RandomSelection --name
+      ConfigurationSelection_2
+    deps:
+    - nodes/ASEMD/metrics_dict.csv
+    - nodes/ASEMD/model
+    - nodes/ASEMD/steps_before_stopping.json
+    - nodes/ASEMD/trajectory.h5
+    - nodes/ASEMD/velocity_cache.json
+    - nodes/ConfigurationSelection/_hash.json
+    - nodes/ConfigurationSelection/selected_configurations.json
+    - nodes/ConfigurationSelection_1/_hash.json
+    - nodes/ConfigurationSelection_1/selected_configurations.json
+    outs:
+    - nodes/ConfigurationSelection_2/_hash.json
+    - nodes/ConfigurationSelection_2/selected_configurations.json
+    params:
+    - ConfigurationSelection_2
+  MLModel:
+    cmd: zntrack run ipsuite.models.mace_model.MACE --name MLModel
+    deps:
+    - mace.yaml
+    - nodes/ConfigurationSelection_1/_hash.json
+    - nodes/ConfigurationSelection_1/selected_configurations.json
+    - nodes/ConfigurationSelection_2/_hash.json
+    - nodes/ConfigurationSelection_2/selected_configurations.json
+    outs:
+    - nodes/MLModel/model
+    - nodes/MLModel/test-data.extxyz
+    - nodes/MLModel/train-data.extxyz
+    - nodes/MLModel/training.csv
+    params:
+    - MLModel
+  Packmol:
+    cmd: zntrack run ipsuite.configuration_generation.packmol.Packmol --name Packmol
+    deps:
+    - nodes/SmilesToAtoms/atoms.h5
+    - nodes/SmilesToAtoms/molecule.png
+    outs:
+    - nodes/Packmol/atoms.h5
+    - nodes/Packmol/packmol
+    params:
+    - Packmol
+  Prediction:
+    cmd: zntrack run ipsuite.analysis.model.predict.Prediction --name Prediction
+    deps:
+    - nodes/ConfigurationSelection/_hash.json
+    - nodes/ConfigurationSelection/selected_configurations.json
+    - nodes/MLModel/model
+    - nodes/MLModel/test-data.extxyz
+    - nodes/MLModel/train-data.extxyz
+    - nodes/MLModel/training.csv
+    outs:
+    - nodes/Prediction/atoms.h5
+  PredictionMetrics:
+    cmd: zntrack run ipsuite.analysis.model.predict.PredictionMetrics --name PredictionMetrics
+    deps:
+    - nodes/Prediction/atoms.h5
+    metrics:
+    - nodes/PredictionMetrics/energy.json:
+        cache: false
+    - nodes/PredictionMetrics/forces.json:
+        cache: false
+    - nodes/PredictionMetrics/stress.json:
+        cache: false
+    outs:
+    - nodes/PredictionMetrics/energy_df.csv
+    - nodes/PredictionMetrics/forces_df.csv
+    - nodes/PredictionMetrics/plots
+    - nodes/PredictionMetrics/stress_df.csv
+  SmilesToAtoms:
+    cmd: zntrack run ipsuite.configuration_generation.smiles_to_atoms.SmilesToAtoms
+      --name SmilesToAtoms
+    outs:
+    - nodes/SmilesToAtoms/atoms.h5
+    - nodes/SmilesToAtoms/molecule.png
+    params:
+    - SmilesToAtoms

@@ -1,0 +1,2 @@
+git+https://github.com/zincware/ipsuite.git#egg=ipsuite[gap]
+git+https://github.com/ACEsuit/mace.git#egg=mace
