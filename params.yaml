@@ -29,7 +29,7 @@ ASEMD_1:
     - 1
     - 1
     sampling_rate: 1
-    steps: 5000
+    steps: 100
 ASEMD_1_thermostat:
     friction: 0.01
     temperature: 300
@@ -42,7 +42,7 @@ ConfigurationSelection:
     n_configurations: 250
     seed: 1234
 ConfigurationSelection_1:
-    n_configurations: 250
+    n_configurations: 20
     seed: 1234
 MLModel:
     distance_nb:
