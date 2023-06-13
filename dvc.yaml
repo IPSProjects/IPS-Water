@@ -10,7 +10,7 @@ plots:
 - nodes/ASEMD_1/metrics_dict.csv: {}
 stages:
   ASEGeoOpt:
-    cmd: zntrack run ipsuite.calculators.ase_geoopt.ASEGeoOpt --name ASEGeoOpt
+    cmd: zntrack run ipsuite.nodes.ASEGeoOpt --name ASEGeoOpt
     deps:
     - nodes/CP2KSinglePoint/atoms.h5
     - nodes/CP2KSinglePoint/cp2k
@@ -22,7 +22,7 @@ stages:
     params:
     - ASEGeoOpt
   ASEMD:
-    cmd: zntrack run ipsuite.calculators.ase_md.ASEMD --name ASEMD
+    cmd: zntrack run ipsuite.nodes.ASEMD --name ASEMD
     deps:
     - nodes/ASEGeoOpt/model_outs
     - nodes/ASEGeoOpt/optim.traj
@@ -40,7 +40,7 @@ stages:
     params:
     - ASEMD
   ASEMD_1:
-    cmd: zntrack run ipsuite.calculators.ase_md.ASEMD --name ASEMD_1
+    cmd: zntrack run ipsuite.nodes.ASEMD --name ASEMD_1
     deps:
     - nodes/ASEGeoOpt/model_outs
     - nodes/ASEGeoOpt/optim.traj
@@ -60,8 +60,7 @@ stages:
     params:
     - ASEMD_1
   ASEMD_1_thermostat:
-    cmd: zntrack run ipsuite.calculators.ase_md.LangevinThermostat --name ASEMD_1_thermostat
-      --hash-only
+    cmd: zntrack run ipsuite.nodes.LangevinThermostat --name ASEMD_1_thermostat --hash-only
     outs:
     - nodes/ASEMD_1_thermostat/hash
     params:
@@ -69,8 +68,7 @@ stages:
     - zntrack.json:
       - ASEMD_1.thermostat
   ASEMD_thermostat:
-    cmd: zntrack run ipsuite.calculators.ase_md.LangevinThermostat --name ASEMD_thermostat
-      --hash-only
+    cmd: zntrack run ipsuite.nodes.LangevinThermostat --name ASEMD_thermostat --hash-only
     outs:
     - nodes/ASEMD_thermostat/hash
     params:
@@ -78,7 +76,7 @@ stages:
     - zntrack.json:
       - ASEMD.thermostat
   CP2KSinglePoint:
-    cmd: zntrack run ipsuite.calculators.cp2k.CP2KSinglePoint --name CP2KSinglePoint
+    cmd: zntrack run ipsuite.nodes.CP2KSinglePoint --name CP2KSinglePoint
     deps:
     - GTH_BASIS_SETS
     - GTH_POTENTIALS
@@ -91,8 +89,7 @@ stages:
     params:
     - cp2k.yaml:
   ConfigurationSelection:
-    cmd: zntrack run ipsuite.configuration_selection.random.RandomSelection --name
-      ConfigurationSelection
+    cmd: zntrack run ipsuite.nodes.RandomSelection --name ConfigurationSelection
     deps:
     - nodes/ASEMD/metrics_dict.csv
     - nodes/ASEMD/model
@@ -105,8 +102,7 @@ stages:
     params:
     - ConfigurationSelection
   ConfigurationSelection_1:
-    cmd: zntrack run ipsuite.configuration_selection.random.RandomSelection --name
-      ConfigurationSelection_1
+    cmd: zntrack run ipsuite.nodes.RandomSelection --name ConfigurationSelection_1
     deps:
     - nodes/ASEMD/metrics_dict.csv
     - nodes/ASEMD/model
@@ -121,8 +117,7 @@ stages:
     params:
     - ConfigurationSelection_1
   ConfigurationSelection_2:
-    cmd: zntrack run ipsuite.configuration_selection.random.RandomSelection --name
-      ConfigurationSelection_2
+    cmd: zntrack run ipsuite.nodes.RandomSelection --name ConfigurationSelection_2
     deps:
     - nodes/ASEMD/metrics_dict.csv
     - nodes/ASEMD/model
@@ -139,7 +134,7 @@ stages:
     params:
     - ConfigurationSelection_2
   MLModel:
-    cmd: zntrack run ipsuite.models.mace_model.MACE --name MLModel
+    cmd: zntrack run ipsuite.nodes.MACE --name MLModel
     deps:
     - mace.yaml
     - nodes/ConfigurationSelection_1/_hash.json
@@ -154,7 +149,7 @@ stages:
     params:
     - MLModel
   Packmol:
-    cmd: zntrack run ipsuite.configuration_generation.packmol.Packmol --name Packmol
+    cmd: zntrack run ipsuite.nodes.Packmol --name Packmol
     deps:
     - nodes/SmilesToAtoms/atoms.h5
     - nodes/SmilesToAtoms/molecule.png
@@ -164,7 +159,7 @@ stages:
     params:
     - Packmol
   Prediction:
-    cmd: zntrack run ipsuite.analysis.model.predict.Prediction --name Prediction
+    cmd: zntrack run ipsuite.nodes.Prediction --name Prediction
     deps:
     - nodes/ConfigurationSelection/_hash.json
     - nodes/ConfigurationSelection/selected_configurations.json
@@ -175,7 +170,7 @@ stages:
     outs:
     - nodes/Prediction/atoms.h5
   PredictionMetrics:
-    cmd: zntrack run ipsuite.analysis.model.predict.PredictionMetrics --name PredictionMetrics
+    cmd: zntrack run ipsuite.nodes.PredictionMetrics --name PredictionMetrics
     deps:
     - nodes/Prediction/atoms.h5
     metrics:
@@ -191,8 +186,7 @@ stages:
     - nodes/PredictionMetrics/plots
     - nodes/PredictionMetrics/stress_df.csv
   SmilesToAtoms:
-    cmd: zntrack run ipsuite.configuration_generation.smiles_to_atoms.SmilesToAtoms
-      --name SmilesToAtoms
+    cmd: zntrack run ipsuite.nodes.SmilesToAtoms --name SmilesToAtoms
     outs:
     - nodes/SmilesToAtoms/atoms.h5
     - nodes/SmilesToAtoms/molecule.png

@@ -13,7 +13,7 @@
                     "instance": {
                         "_type": "zntrack.Node",
                         "value": {
-                            "module": "ipsuite.configuration_generation.smiles_to_atoms",
+                            "module": "ipsuite.nodes",
                             "cls": "SmilesToAtoms",
                             "name": "SmilesToAtoms",
                             "remote": null,
@@ -48,7 +48,7 @@
                 "instance": {
                     "_type": "zntrack.Node",
                     "value": {
-                        "module": "ipsuite.configuration_generation.packmol",
+                        "module": "ipsuite.nodes",
                         "cls": "Packmol",
                         "name": "Packmol",
                         "remote": null,
@@ -74,7 +74,7 @@
                 "instance": {
                     "_type": "zntrack.Node",
                     "value": {
-                        "module": "ipsuite.configuration_generation.packmol",
+                        "module": "ipsuite.nodes",
                         "cls": "Packmol",
                         "name": "Packmol",
                         "remote": null,
@@ -92,7 +92,7 @@
                 "instance": {
                     "_type": "zntrack.Node",
                     "value": {
-                        "module": "ipsuite.calculators.cp2k",
+                        "module": "ipsuite.nodes",
                         "cls": "CP2KSinglePoint",
                         "name": "CP2KSinglePoint",
                         "remote": null,
@@ -120,7 +120,7 @@
                 "instance": {
                     "_type": "zntrack.Node",
                     "value": {
-                        "module": "ipsuite.calculators.ase_geoopt",
+                        "module": "ipsuite.nodes",
                         "cls": "ASEGeoOpt",
                         "name": "ASEGeoOpt",
                         "remote": null,
@@ -138,7 +138,7 @@
                 "instance": {
                     "_type": "zntrack.Node",
                     "value": {
-                        "module": "ipsuite.calculators.cp2k",
+                        "module": "ipsuite.nodes",
                         "cls": "CP2KSinglePoint",
                         "name": "CP2KSinglePoint",
                         "remote": null,
@@ -153,10 +153,11 @@
             "_type": "pathlib.Path",
             "value": "$nwd$/model"
         },
+        "modifier": null,
         "thermostat": {
             "_type": "zntrack.Node",
             "value": {
-                "module": "ipsuite.calculators.ase_md",
+                "module": "ipsuite.nodes",
                 "cls": "LangevinThermostat",
                 "name": "ASEMD_thermostat",
                 "remote": null,
@@ -176,7 +177,7 @@
                     "instance": {
                         "_type": "zntrack.Node",
                         "value": {
-                            "module": "ipsuite.calculators.ase_md",
+                            "module": "ipsuite.nodes",
                             "cls": "ASEMD",
                             "name": "ASEMD",
                             "remote": null,
@@ -200,7 +201,7 @@
                     "instance": {
                         "_type": "zntrack.Node",
                         "value": {
-                            "module": "ipsuite.calculators.ase_md",
+                            "module": "ipsuite.nodes",
                             "cls": "ASEMD",
                             "name": "ASEMD",
                             "remote": null,
@@ -220,7 +221,7 @@
                 "instance": {
                     "_type": "zntrack.Node",
                     "value": {
-                        "module": "ipsuite.configuration_selection.random",
+                        "module": "ipsuite.nodes",
                         "cls": "RandomSelection",
                         "name": "ConfigurationSelection",
                         "remote": null,
@@ -240,7 +241,7 @@
                     "instance": {
                         "_type": "zntrack.Node",
                         "value": {
-                            "module": "ipsuite.calculators.ase_md",
+                            "module": "ipsuite.nodes",
                             "cls": "ASEMD",
                             "name": "ASEMD",
                             "remote": null,
@@ -261,7 +262,7 @@
                     "instance": {
                         "_type": "zntrack.Node",
                         "value": {
-                            "module": "ipsuite.configuration_selection.random",
+                            "module": "ipsuite.nodes",
                             "cls": "RandomSelection",
                             "name": "ConfigurationSelection",
                             "remote": null,
@@ -278,7 +279,7 @@
                     "instance": {
                         "_type": "zntrack.Node",
                         "value": {
-                            "module": "ipsuite.configuration_selection.random",
+                            "module": "ipsuite.nodes",
                             "cls": "RandomSelection",
                             "name": "ConfigurationSelection_1",
                             "remote": null,
@@ -299,7 +300,7 @@
                 "instance": {
                     "_type": "zntrack.Node",
                     "value": {
-                        "module": "ipsuite.configuration_selection.random",
+                        "module": "ipsuite.nodes",
                         "cls": "RandomSelection",
                         "name": "ConfigurationSelection_2",
                         "remote": null,
@@ -310,7 +311,7 @@
                 "item": null
             }
         },
-        "device": "cuda",
+        "device": null,
         "model_dir": {
             "_type": "pathlib.Path",
             "value": "$nwd$/model"
@@ -321,7 +322,7 @@
                 "instance": {
                     "_type": "zntrack.Node",
                     "value": {
-                        "module": "ipsuite.configuration_selection.random",
+                        "module": "ipsuite.nodes",
                         "cls": "RandomSelection",
                         "name": "ConfigurationSelection_1",
                         "remote": null,
@@ -352,7 +353,7 @@
                 "instance": {
                     "_type": "zntrack.Node",
                     "value": {
-                        "module": "ipsuite.configuration_selection.random",
+                        "module": "ipsuite.nodes",
                         "cls": "RandomSelection",
                         "name": "ConfigurationSelection",
                         "remote": null,
@@ -370,7 +371,7 @@
                 "instance": {
                     "_type": "zntrack.Node",
                     "value": {
-                        "module": "ipsuite.models.mace_model",
+                        "module": "ipsuite.nodes",
                         "cls": "MACE",
                         "name": "MLModel",
                         "remote": null,
@@ -389,7 +390,7 @@
                 "instance": {
                     "_type": "zntrack.Node",
                     "value": {
-                        "module": "ipsuite.analysis.model.predict",
+                        "module": "ipsuite.nodes",
                         "cls": "Prediction",
                         "name": "Prediction",
                         "remote": null,
@@ -425,7 +426,7 @@
                 "instance": {
                     "_type": "zntrack.Node",
                     "value": {
-                        "module": "ipsuite.calculators.ase_geoopt",
+                        "module": "ipsuite.nodes",
                         "cls": "ASEGeoOpt",
                         "name": "ASEGeoOpt",
                         "remote": null,
@@ -443,7 +444,7 @@
                 "instance": {
                     "_type": "zntrack.Node",
                     "value": {
-                        "module": "ipsuite.models.mace_model",
+                        "module": "ipsuite.nodes",
                         "cls": "MACE",
                         "name": "MLModel",
                         "remote": null,
@@ -458,10 +459,11 @@
             "_type": "pathlib.Path",
             "value": "$nwd$/model"
         },
+        "modifier": null,
         "thermostat": {
             "_type": "zntrack.Node",
             "value": {
-                "module": "ipsuite.calculators.ase_md",
+                "module": "ipsuite.nodes",
                 "cls": "LangevinThermostat",
                 "name": "ASEMD_1_thermostat",
                 "remote": null,
